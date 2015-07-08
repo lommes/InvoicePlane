@@ -38,4 +38,30 @@ function invoice_logo_pdf()
     return '';
 }
 
+
+function return_bytes($val) 
+{
+    $val = trim($val);
+    $last = strtolower($val[strlen($val)-1]);
+
+    switch($last) 
+    {
+        case 'g':
+        $val *= 1024;
+        case 'm':
+        $val *= 1024;
+        case 'k':
+        $val *= 1024;
+    }
+
+    return $val;
+}
+
+function get_upload_max_filesize()
+{
+    $max_upload = return_bytes(ini_get('upload_max_filesize'));
+    $max_post = return_bytes(ini_get('post_max_size'));
+    return min($max_upload, $max_post);
+}
+
 ?>

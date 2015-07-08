@@ -41,12 +41,23 @@ class Upload extends Admin_Controller
             if (!$file_exists) //If file does not exists then upload
             {
                 $data = ['client_id' => $customerId, 'url_key' => $url_key, 'file_name_original' => $fileName, 'file_name_new' => $url_key . '_' . $fileName];
-                $this->mdl_uploads->create($data);
+                
 
                 move_uploaded_file($tempFile, $targetFile);
+                if(!file_exists($targetFile)) {
+                    $ret = array('error' => 'File could not be written');
+                    header('Content-Type: application/json');
+                    echo json_encode($ret);
+                    http_response_code(500);
+                }
+
+
+                $this->mdl_uploads->create($data);
             } else //If file exists then echo the error and set a http error response
             {
-                echo lang('error_dublicate_file');;
+                $ret = array('error' => lang('error_dublicate_file'));
+                header('Content-Type: application/json');
+                echo json_encode($ret);
                 http_response_code(404);
             }
 

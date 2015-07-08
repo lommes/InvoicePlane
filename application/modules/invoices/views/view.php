@@ -508,6 +508,7 @@ if ($this->config->item('disable_read_only') == TRUE) {
         parallelUploads: 20,
         uploadMultiple: false,
         previewTemplate: previewTemplate,
+        maxFilesize: <?php echo get_upload_max_filesize() / 1024 / 1024 ?>,
         autoQueue: true, // Make sure the files aren't queued until manually added
         previewsContainer: "#previews", // Define the container to display the previews
         clickable: ".fileinput-button", // Define the element that should be used as click trigger to select files.
@@ -528,7 +529,27 @@ if ($this->config->item('disable_read_only') == TRUE) {
                     thisDropzone.emit("success", mockFile);
                 });
             });
-        }
+        },
+        error: function(file, response){
+            html = '<div id="" class="file-row dz-complete dz-success dz-image-preview"><div><span class="preview">' +
+                        '<img data-dz-thumbnail/></span>' +
+                    '</div>' +
+                    '<div>' +
+                        '<p class="name" data-dz-name>'+file.name+'</p>' + 
+                        '<strong class="error text-danger" data-dz-errormessage>'+response.error+'</strong>' + 
+                    '</div>' + 
+                    '<div>' +
+                        '<p class="size" data-dz-size></p>' +
+                        '<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+                            '<div class="progress-bar progress-bar-success" style="..." data-dz-uploadprogress></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div></div></div>';
+
+            
+            file.previewElement.outerHTML = html;
+            console.log(file.previewElement);
+        }        
     });
 
     myDropzone.on("addedfile", function (file) {
